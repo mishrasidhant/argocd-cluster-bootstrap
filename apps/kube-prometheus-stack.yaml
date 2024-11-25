@@ -1,0 +1,31 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: kube-prometheus-stack
+  namespace: argocd
+    # Add a this finalizer ONLY if you want these to cascade delete.
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: 'https://prometheus-community.github.io/helm-charts'
+    chart: kube-prometheus-stack
+    targetRevision: 66.2.1
+  # sources:
+  # - repoURL: 'https://prometheus-community.github.io/helm-charts'
+  #   chart: kube-prometheus-stack
+  #   targetRevision: 66.2.1
+  #   helm:
+  #     valueFiles:
+  #     - $values/charts/prometheus/values.yaml
+  # - repoURL: 'https://git.example.com/org/value-files.git'
+  #   targetRevision: dev
+  #   ref: values
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: kube-prometheus-stack
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true
